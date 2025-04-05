@@ -161,6 +161,118 @@ userRouter.post("/signin",async(req,res)=>{
         return;
     }
 })
+
+// Step 8
+
+userRouter.put("/",authMiddleware,async(req,res)=>{
+    const schema=z.object({
+        firstname:z.string().min(1).max(100),
+        lastname:z.string().min(1).max(100),
+        password:z.string().min(5).max(20)
+        .refine(
+            function(password)
+            {
+                return /[a-z]/.test(password);
+            },
+            {
+                message:"Passoword Must Contain At Least one Lowecase Letter"
+            }
+        )
+        .refine(
+            function(password)
+            {
+                return /[A-Z]/.test(password);
+            },
+            {
+                message:"The Password Must Contain At Least one Uppercase Letter"
+            }
+        )
+        .refine(
+            function(password)
+            {
+                return /[0-9]/.test(password);
+            },
+            {
+                message:"The Password Must Contain At Least one Number "
+            }
+        )
+        .refine(
+            function(password)
+            {
+                return /[\W_]/.test(password);
+            },
+            {
+                message:"The Password Must Contain Atleast one Special Character"
+            }
+        )
+    });
+
+    const result=schema.safeParse(req.body);
+    console.log(req.userId);
+    const Id=req.userId;
+    if(result.success){
+        // we will Proceed with the updates
+        const{firstname,lastname,password}=req.body;
+        const hashedPwd= await bcrypt.hash(password,5);
+
+        try{
+            const user=await UserModel.updateOne({
+                _id:Id
+            },{
+                firstname:firstname,
+                lastname:lastname,
+                password:hashedPwd
+            })
+            res.status(200).send({
+                message:"Success Updatation"
+            })
+            return;
+        }
+        catch(error){
+            res.send({
+                msg:"Some Error in DB while Updating the Data",
+                error:error
+            });
+            return;
+        }
+    }
+    else{
+        res.status(403).send({
+            error:"Zod Error"
+        });
+    }
+
+})
+
+userRouter.post("/bulk",authMiddleware,async(req,res)=>{
+    const {filter}=req.query;
+
+    try{
+        const users=await UserModel.find({
+            $or: [
+                { firstname: { "$regex": filter } },
+                { lastname: { "$regex": filter } }
+            ]
+        });
+
+        res.json({
+            user:users.map(user=>({
+                username:user.username,
+                firstname:user.firstname,
+                lastname:user.lastname,
+                _id: user._id
+            }))
+        })
+        return;
+    }
+    catch{
+        res.send({
+            error:"Error while making an db Request"
+        })
+    }
+   
+})
+
 module.exports={
     userRouter
 }

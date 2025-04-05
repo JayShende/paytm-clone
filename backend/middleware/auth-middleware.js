@@ -10,7 +10,7 @@ const authMiddleware=(req,res,next)=>{
 
     try{
         const result=jwt.verify(token,JWT_SECRET)
-        req.userId=result._id;
+        req.userId=result.id;
         next();
     }
     catch{
