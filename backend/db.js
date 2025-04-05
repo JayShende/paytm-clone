@@ -19,9 +19,23 @@ const User=new Schema({
     password:String
 });
 
+const Account=new Schema({
+    userId:{
+        type:ObjectId,
+        required:true,
+        ref:UserModel
+    },
+    balance:{
+        type:Number,
+        required:true
+    }
+})
+
 
 const UserModel=mongoose.model("users",User);
+const AccountModel=mongoose.model("account",Account)
 
 module.exports={
-    UserModel:UserModel
+    UserModel:UserModel,
+    AccountModel:AccountModel
 };
