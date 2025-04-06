@@ -1,8 +1,41 @@
+import { useRef } from "react";
 import { Button } from "../components/button";
 import { Footer } from "../components/card-footer";
 import { Input } from "../components/input";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export function SigninPage() {
+  const usernameRef = useRef(null);
+  const passwordRef = useRef(null);
+
+  async function signIn() {
+    const username = usernameRef.current.value;
+    const password = passwordRef.current.value;
+
+    const response = await axios({
+      method: "post",
+      url: "http://localhost:3000/api/v1/user/signin",
+      data: {
+        username: username,
+        password: password,
+      },
+    });
+    console.log(response.data.message);
+    if (response.status === 202) {
+      if(localStorage.getItem("token-paytm"))
+      {
+        localStorage.removeItem("token-paytm");
+      }
+      const token = response.data.token;
+      localStorage.setItem("token-paytm", token);
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 5000); // 5 seconds delay
+    }
+  }
+
+  const navigate = useNavigate();
   return (
     <div className="bg-zinc-400 w-screen h-screen flex justify-center items-center">
       <div className="bg-zinc-50 w-[23vw] h-auto rounded-lg drop-shadow-md">
@@ -16,23 +49,29 @@ export function SigninPage() {
             </p>
           </div>
           <div className="flex flex-col gap-y-3">
-            <Input label={"First Name"} placeholder={"John"} type={"text"} />
-            
+            <Input
+              label={"username"}
+              placeholder={"johndoe@example.com"}
+              type={"text"}
+              refrence={usernameRef}
+            />
+
             <Input
               label={"Password"}
               placeholder={"********"}
               type={"password"}
+              refrence={passwordRef}
             />
           </div>
           <div className="my-6">
-          <Button
-          label={"Login"}
-          />
-          <Footer
-          label1={"Don't Have an Account?"}
-          label2={"Sign Up"}
-          link={"/signup"}
-          />
+            <Button label={"Login"}
+            onClickfun={signIn}
+            />
+            <Footer
+              label1={"Don't Have an Account?"}
+              label2={"Sign Up"}
+              link={"/signup"}
+            />
           </div>
         </div>
       </div>
