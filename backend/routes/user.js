@@ -151,7 +151,7 @@ userRouter.post("/signin",async(req,res)=>{
                 id:user._id
             },JWT_SECRET);
             res.status(202).send({
-                Message:"Signin Successfull",
+                message:"Signin Successfull",
                 token:token
             });
             return;

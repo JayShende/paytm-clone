@@ -1,9 +1,10 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Button } from "../components/button";
 import { Footer } from "../components/card-footer";
 import { Input } from "../components/input";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import ToastSuccess from "../components/toast";
 
 export function SigninPage() {
   const usernameRef = useRef(null);
@@ -22,12 +23,15 @@ export function SigninPage() {
       },
     });
     console.log(response.data.message);
+    setToast(true);
+      setLabel(response.data.message)
     if (response.status === 202) {
       if(localStorage.getItem("token-paytm"))
       {
         localStorage.removeItem("token-paytm");
       }
       const token = response.data.token;
+      
       localStorage.setItem("token-paytm", token);
       setTimeout(() => {
         navigate("/dashboard");
@@ -36,6 +40,9 @@ export function SigninPage() {
   }
 
   const navigate = useNavigate();
+
+    const [toast, setToast] = useState(false);
+    const [label, setLabel] = useState("");
   return (
     <div className="bg-zinc-400 w-screen h-screen flex justify-center items-center">
       <div className="bg-zinc-50 w-[23vw] h-auto rounded-lg drop-shadow-md">
@@ -62,6 +69,7 @@ export function SigninPage() {
               type={"password"}
               refrence={passwordRef}
             />
+            {toast && <ToastSuccess label={label} />}
           </div>
           <div className="my-6">
             <Button label={"Login"}

@@ -3,8 +3,8 @@ import { Button } from "../components/button";
 import { Footer } from "../components/card-footer";
 import { Input } from "../components/input";
 import axios from "axios";
-import ToastCompo from "../components/toast";
 import { useNavigate } from "react-router-dom";
+import ToastSuccess from "../components/toast";
 
 export function SignupPage() {
   const firstnameRef = useRef(null);
@@ -82,7 +82,7 @@ export function SignupPage() {
               type={"password"}
               refrence={passwordRef}
             />
-            {toast && <ToastCompo label={label} />}
+            {toast && <ToastSuccess label={label} />}
           </div>
           <div className="my-6">
             <Button label={"Sign Up"} onClickfun={signUp} />
