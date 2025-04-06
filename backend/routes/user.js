@@ -253,7 +253,7 @@ userRouter.put("/",authMiddleware,async(req,res)=>{
 
 })
 
-userRouter.post("/bulk",authMiddleware,async(req,res)=>{
+userRouter.get("/bulk",authMiddleware,async(req,res)=>{
     const filter=req.query.filter || "";
 
     try{
