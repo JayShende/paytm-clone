@@ -22,7 +22,6 @@ userRouter.post("/test",authMiddleware,(req,res)=>{
 
 userRouter.post("/signup",async(req,res)=>{
     const{firstname,lastname,username,password}=req.body;
-    console.log(req.body);
     const schema=z.object({
         username:z.string().min(5).max(100).email(),
         firstname:z.string().min(1).max(100),
@@ -99,7 +98,6 @@ userRouter.post("/signup",async(req,res)=>{
                 username:username,
                 password:hashedPwd
             })
-            console.log(user);
             const token= jwt.sign({
                 userId:user._id
             },JWT_SECRET);
@@ -111,7 +109,7 @@ userRouter.post("/signup",async(req,res)=>{
                 balance:balanceSet
             })
             
-            res.send({
+            res.status(202).send({
                 message: "User created successfully",
                 token: token
             });
@@ -127,7 +125,7 @@ userRouter.post("/signup",async(req,res)=>{
         
     }
     else{
-        res.send("Error in Credentials")
+        res.send({message:"Error in Credentials"})
     }
 
 })
@@ -220,7 +218,6 @@ userRouter.put("/",authMiddleware,async(req,res)=>{
     });
 
     const result=schema.safeParse(req.body);
-    console.log(req.userId);
     const Id=req.userId;
     if(result.success){
         // we will Proceed with the updates
