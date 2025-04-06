@@ -23,7 +23,7 @@ const Account=new Schema({
     userId:{
         type:ObjectId,
         required:true,
-        ref:UserModel
+        ref:"UserModel"
     },
     balance:{
         type:Number,

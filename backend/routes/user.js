@@ -2,12 +2,17 @@ const express=require("express");
 const Router=express.Router;
 const {z}=require("zod");
 const bcrypt = require("bcryptjs");
-const { UserModel } = require("../db");
+const { UserModel, AccountModel } = require("../db");
 const jwt=require("jsonwebtoken");
 const { JWT_SECRET } = require("../config");
 const { authMiddleware } = require("../middleware/auth-middleware");
 
 const userRouter=Router()
+
+function getRandomValue() {
+    return Math.floor(Math.random() * 100000) + 1;
+}
+
 
 userRouter.post("/test",authMiddleware,(req,res)=>{
     res.send({
@@ -99,6 +104,13 @@ userRouter.post("/signup",async(req,res)=>{
                 userId:user._id
             },JWT_SECRET);
 
+           
+            const balanceSet=getRandomValue();
+            const accountEntry=await AccountModel.create({
+                userId:user._id,
+                balance:balanceSet
+            })
+            
             res.send({
                 message: "User created successfully",
                 token: token
