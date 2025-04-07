@@ -10,6 +10,7 @@ const accountRouter=Router()
 accountRouter.get("/balance",authMiddleware,async(req,res)=>{
     
     const userId=req.userId;
+    console.log(userId);
 
     // Fetch Balance From the UserId
     try{
@@ -22,9 +23,10 @@ accountRouter.get("/balance",authMiddleware,async(req,res)=>{
         });
         return;
     }
-    catch{
+    catch(e){
         res.send({
-            error:"Error in Making an DB Request"
+            error:"Error in Making an DB Request",
+            e:e
         })
     }
 })
@@ -91,7 +93,7 @@ accountRouter.post("/transfer",authMiddleware,async(req,res)=>{
         }).session(session);
 
         await session.commitTransaction();
-        res.json({
+        res.status(202).send({
             message: "Transfer successful"
         });
     }catch{

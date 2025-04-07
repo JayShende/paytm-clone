@@ -148,7 +148,7 @@ userRouter.post("/signin",async(req,res)=>{
            const result=await bcrypt.compare(password,user.password);
            if(result==true){
             const token= jwt.sign({
-                id:user._id
+                userId:user._id
             },JWT_SECRET);
             res.status(202).send({
                 message:"Signin Successfull",

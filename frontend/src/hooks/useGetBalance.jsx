@@ -4,11 +4,7 @@ import { useEffect, useState } from "react";
 export function useGetBalance(){
     const[balance,setBalance]=useState(0);
 
-    useEffect(()=>{
-        fetch();
-    },[])
-
-    async function fetch(){
+    async function fetchBalance(){
         const res=await axios({
             method:"get",
             url:"http://localhost:3000/api/v1/account/balance",
@@ -19,6 +15,7 @@ export function useGetBalance(){
         setBalance(res.data.balance);
     }
     return{
+        fetchBalance,
         balance
     }
 }
